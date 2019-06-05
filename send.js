@@ -4,10 +4,6 @@ var amqp = require('amqplib');
 var thingName = "";
 console.log('Button and Environment!');
 
-function onButtonChange(state) {
-    sendData(state);
-}
-
 function sendData(data) {
    amqp.connect('amqp://192.168.1.130').then(function(conn) {
     return conn.createChannel().then(function(ch) {
@@ -21,6 +17,10 @@ function sendData(data) {
     });
   }).finally(function() { conn.close(); });
 }).catch(console.warn);
+}
+
+function onButtonChange(state) {
+    sendData('Thingy: ' + thingName + ' Button: ' + state);
 }
 
 function onTemperatureData(temperature) {

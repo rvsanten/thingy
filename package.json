@@ -6,6 +6,7 @@
   "dependencies": {
     "amqp": "^0.2.7",
     "amqplib": "^0.5.3",
+    "azure-iot-device-amqp": "^1.9.9",
     "thingy52": "^1.0.4"
   },
   "devDependencies": {},
