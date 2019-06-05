@@ -1,0 +1,17 @@
+{
+  "name": "thingy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "amqp": "^0.2.7",
+    "amqplib": "^0.5.3",
+    "thingy52": "^1.0.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
