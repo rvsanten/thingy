@@ -5,7 +5,7 @@ var thingName = "";
 console.log('Button and Environment!');
 
 function sendData(data) {
-   amqp.connect('amqp://192.168.1.130').then(function(conn) {
+   amqp.connect('amqp://192.168.1.19').then(function(conn) {
     return conn.createChannel().then(function(ch) {
     var q = 'thingy_data';
     var ok = ch.assertQueue(q, {durable: false});
