@@ -3,11 +3,20 @@ var Thingy = require('thingy52');
 var amqp = require('amqplib');
 var thingName = "";
 
+var led_rgb = {
+    r: 0,
+    g: 0,
+    b: 0
+};
+
+// Configuration items
 var thingy_uuid = 'c02afdf514cf'
+var amqp_connnection = 'amqp://pi:pi@52.59.199.28';
+
 console.log('Button and Environment!');
 
 function sendData(data) {
-    amqp.connect('amqp://192.168.1.19').then(function (conn) {
+    amqp.connect(amqp_connnection).then(function (conn) {
         return conn.createChannel().then(function (ch) {
             var q = 'thingy_data';
             var ok = ch.assertQueue(q, { durable: false });
@@ -23,6 +32,27 @@ function sendData(data) {
 
 function onButtonChange(state) {
     sendData('Thingy: ' + thingName + ' Button: ' + state);
+
+    if (state == 'Pressed') {
+        led_color = (led_color + 1) % 8;
+        if (led_color == 0) {
+            led_color = 1;
+        }
+
+        led_rgb.r = led_rgb.r + 50;
+        led_rgb.g = led_rgb.g + 50;
+        led_rgb.b = led_rgb.b + 50;
+
+        if (led_rgb.r > 250) {
+            red = 0;
+            green = 0;
+            blue = 0;
+        }
+
+        this.led_set(led_rgb, function (error) {
+            console.log('LED color change: ' + error);
+        });
+    }
 }
 
 function onTemperatureData(temperature) {
