@@ -131,4 +131,9 @@ function onDiscover(thingy) {
     });
 }
 
-Thingy.discover(onDiscover);
+console.log('Starting thingy device discovery!');
+// Global discover 
+// Thingy.discover(onDiscover);
+
+// Targetted discover
+Thingy.discoverById(thingy_uuid, onDiscover);
