@@ -15,6 +15,7 @@ function sendData(data) {
 
             console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
             ch.consume(q, function (msg) {
+                console.log("Header received %s", msg.properties.headers.header1);
                 console.log(" [x] Payload received %s", msg.content.toString());
             }, {
                     noAck: true
