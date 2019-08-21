@@ -16,3 +16,4 @@ motionProxy.setAngles(names,angles,fractionMaxSpeed)
 time.sleep(1.0)
 angles = 0.0
 motionProxy.setAngles(names,angles,fractionMaxSpeed)
+motionProxy.setStiffnesses("Head", 0.0)
