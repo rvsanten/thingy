@@ -34,14 +34,9 @@ function onButtonChange(state) {
     sendData('Thingy: ' + thingName + ' Button: ' + state);
 
     if (state == 'Pressed') {
-        led_color = (led_color + 1) % 8;
-        if (led_color == 0) {
-            led_color = 1;
-        }
-
-        led_rgb.r = led_rgb.r + 50;
-        led_rgb.g = led_rgb.g + 50;
-        led_rgb.b = led_rgb.b + 50;
+        led_rgb.r = led_rgb.r + 15;
+        led_rgb.g = led_rgb.g + 15;
+        led_rgb.b = led_rgb.b + 15;
 
         if (led_rgb.r > 250) {
             red = 0;

@@ -32,5 +32,4 @@ function sendData(data) {
     }).catch(console.warn);
 }
 
-
 sendData("blaaaaat");
