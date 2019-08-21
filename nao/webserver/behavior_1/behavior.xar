@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ChoregrapheProject xmlns="http://www.aldebaran-robotics.com/schema/choregraphe/project.xsd" xar_version="3">
+    <Box name="root" id="-1" localization="8" tooltip="Root box of Choregraphe&apos;s behavior. Highest level possible." x="0" y="0">
+        <bitmap>media/images/box/root.png</bitmap>
+        <script language="4">
+            <content>
+                <![CDATA[]]>
+</content>
+        </script>
+        <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+        <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+        <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+        <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+        <Timeline enable="0">
+            <BehaviorLayer name="behavior_layer1">
+                <BehaviorKeyframe name="keyframe1" index="1">
+                    <Diagram>
+                        <Box name="Python Script" id="1" localization="8" tooltip="This box contains a basic python script and can be used to create any python script box you would like.&#x0A;&#x0A;To edit its script, double-click on it." x="226" y="126">
+                            <bitmap>media/images/box/box-python-script.png</bitmap>
+                            <script language="4">
+                                <content>
+                                    <![CDATA[import sys
+import time
+import almath
+from naoqi import ALProxy
+from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
+from urlparse import urlparse
+
+PORT_NUMBER = 8080
+NAO_IP = "127.0.0.1"
+NAO_PORT = 61986
+
+#This class will handles any incoming request from
+#the browser
+class myHandler(BaseHTTPRequestHandler):
+
+    def BuildActionList(self):
+        actions = { 'movearm' : self.MoveArm,
+                   'movehead' :self.MoveHead,
+                   'takepicture': self.TakePicture
+                 }
+        return actions
+
+    #Handler for the GET requests
+    def do_GET(self):
+        try:
+            self.query = urlparse(self.path).query
+            self.query_components = dict(qc.split("=") for qc in self.query.split("&"))
+            command = self.query_components['command']
+            actionList = self.BuildActionList()
+            actionList[command](self.query_components)
+            self.send_response(200)
+            pass
+        except Exception as inst:
+            print(inst)
+            self.send_response(500)
+
+    def MoveArm(self, params):
+        print ("MoveArm")
+        self.openLeftHand(0)
+        self.openLeftHand(1)
+        self.openRightHand(0)
+        self.openRightHand(1)
+
+    def MoveHead(self, params):
+        print ("MoveHead")
+        self.yawHead(-80)
+        self.yawHead(0)
+        self.pitchHead(30)
+        self.pitchHead(0)
+
+    def TakePicture(self, params):
+        print ("TakePicture")
+
+    def pitchHead(self,angle):
+        try:
+           motionProxy = ALProxy("ALMotion", NAO_IP, NAO_PORT)
+        except Exception,e:
+           print "Could not create proxy to ALMotion"
+           print "Error was: ",e
+           sys.exit(1)
+
+        motionProxy.setStiffnesses("Head", 1.0)
+
+        # Simple command for the HeadPitch joint at 10% max speed
+        names            = "HeadPitch"
+        angles           = angle*almath.TO_RAD
+        fractionMaxSpeed = 0.3
+        motionProxy.setAngles(names,angles,fractionMaxSpeed)
+
+        time.sleep(3.0)
+
+        motionProxy.setStiffnesses("Head", 0.0)
+        pass
+
+
+    def yawHead(self,angle):
+        try:
+           motionProxy = ALProxy("ALMotion", NAO_IP, NAO_PORT)
+        except Exception,e:
+           print "Could not create proxy to ALMotion"
+           print "Error was: ",e
+           sys.exit(1)
+
+        motionProxy.setStiffnesses("Head", 1.0)
+
+        # Simple command for the HeadPitch joint at 10% max speed
+        names            = "HeadYaw"
+        angles           = angle*almath.TO_RAD
+        fractionMaxSpeed = 0.3
+        motionProxy.setAngles(names,angles,fractionMaxSpeed)
+
+        time.sleep(3.0)
+
+        motionProxy.setStiffnesses("Head", 0.0)
+        pass
+
+    def openLeftHand(self,angle):
+        try:
+           motionProxy = ALProxy("ALMotion", NAO_IP, NAO_PORT)
+        except Exception,e:
+           print "Could not create proxy to ALMotion"
+           print "Error was: ",e
+           sys.exit(1)
+
+        motionProxy.setStiffnesses("LHand", 1.0)
+
+        # Simple command for the HeadPitch joint at 10% max speed
+        names            = "LHand"
+        angles           = angle
+        fractionMaxSpeed = 0.3
+        motionProxy.setAngles(names,angles,fractionMaxSpeed)
+
+        time.sleep(3.0)
+
+        motionProxy.setStiffnesses("LHand", 0.0)
+        pass
+
+    def openRightHand(self,angle):
+        try:
+           motionProxy = ALProxy("ALMotion", NAO_IP, NAO_PORT)
+        except Exception,e:
+           print "Could not create proxy to ALMotion"
+           print "Error was: ",e
+           sys.exit(1)
+
+        motionProxy.setStiffnesses("RHand", 1.0)
+
+        # Simple command for the HeadPitch joint at 10% max speed
+        names            = "RHand"
+        angles           = angle
+        fractionMaxSpeed = 0.3
+        motionProxy.setAngles(names,angles,fractionMaxSpeed)
+
+        time.sleep(3.0)
+
+        motionProxy.setStiffnesses("RHand", 0.0)
+        pass
+class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+
+    def onLoad(self):
+        #put initialization code here
+        pass
+
+    def onUnload(self):
+        #put clean-up code here
+        pass
+
+    def onInput_onStart(self):
+        #Create a web server and define the handler to manage the
+        #incoming request
+        self.server = HTTPServer(('', PORT_NUMBER), myHandler)
+        print 'Started httpserver on port ' , PORT_NUMBER
+        #Wait forever for incoming htto requests
+        self.server.serve_forever()
+
+
+    def onInput_onStop(self):
+        print 'Stopreceived, shutting down the web server'
+        self.server.socket.close()
+        self.onUnload() #it is recommended to reuse the clean-up as the box is stopped
+        self.onStopped() #activate the output of the box]]>
+</content>
+                            </script>
+                            <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                            <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                            <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
+                            <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
+                        </Box>
+                        <Link inputowner="1" indexofinput="2" outputowner="0" indexofoutput="2" />
+                    </Diagram>
+                </BehaviorKeyframe>
+            </BehaviorLayer>
+        </Timeline>
+    </Box>
+</ChoregrapheProject>
