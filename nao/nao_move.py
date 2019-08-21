@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 import time
 from naoqi import ALProxy
 motionProxy = ALProxy("ALMotion", "192.168.1.13", 9559)
